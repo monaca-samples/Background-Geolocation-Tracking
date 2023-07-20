@@ -1,0 +1,6 @@
+{
+	"appId": "com.example.geo",
+	"appName": "my-app",
+	"webDir": "out",
+	"bundledWebRuntime": false
+}

@@ -6,11 +6,23 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "static": "next build && next export",
+    "ionic:build": "npm run build",
+    "ionic:serve": "npm run start"
   },
   "dependencies": {
+    "@capacitor/android": "^5.2.1",
+    "@capacitor/core": "^5.2.2",
+    "@capacitor/ios": "^5.2.1",
+    "capacitor": "^0.0.3",
+    "framework7": "^8.2.0",
     "next": "13.4.10",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "test2": "^1.0.5"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.2.1"
   }
 }

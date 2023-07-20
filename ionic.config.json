@@ -1,0 +1,7 @@
+{
+  "name": "geo",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}
