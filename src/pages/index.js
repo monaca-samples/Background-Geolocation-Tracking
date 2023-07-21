@@ -1,13 +1,11 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '../styles/Map.module.css'
+import Button from 'react-bootstrap/Button';
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Map() {
-
-
   return (
     <>
       <Head>
@@ -16,7 +14,10 @@ export default function Map() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className={`${inter.className} ${styles.main}`}>
-        <div>
+        <div id="report" className="h-75"></div>
+        <div className="row"> 
+          <Button className="col btn-success me-3">START</Button>
+          <Button className="col btn-danger">STOP</Button>
         </div>
       </main>
     </>

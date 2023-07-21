@@ -4,4 +4,12 @@
     <string name="title_activity_main">my-app</string>
     <string name="package_name">com.example.geo</string>
     <string name="custom_url_scheme">com.example.geo</string>
+    <!--
+        The channel name for the background notification. This will be visible
+        when the user presses & holds the notification. It defaults to
+        "Background Tracking".
+    -->
+    <string name="capacitor_background_geolocation_notification_channel_name">
+        Background Tracking
+    </string>
 </resources>

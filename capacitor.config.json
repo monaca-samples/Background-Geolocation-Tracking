@@ -2,5 +2,8 @@
 	"appId": "com.example.geo",
 	"appName": "my-app",
 	"webDir": "out",
-	"bundledWebRuntime": false
+	"bundledWebRuntime": false,
+	"android": {
+		"useLegacyBridge": true
+	}
 }
