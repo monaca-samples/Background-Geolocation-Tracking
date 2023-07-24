@@ -2,10 +2,77 @@ import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import styles from '../styles/Map.module.css'
 import Button from 'react-bootstrap/Button';
+import React, { useState, useEffect } from 'react';
+import { registerPlugin } from "@capacitor/core";
 
+const BackgroundGeolocation = registerPlugin("BackgroundGeolocation");
 const inter = Inter({ subsets: ['latin'] })
 
+const INTERVAL = 10000 //milliseconds
+
 export default function Map() {
+
+  const [stop, setStop] = useState(false)
+  const [intervalId, setIntervalId] = useState(-1)
+  const started = Date.now()
+
+  useEffect(() => {
+    if (stop && intervalId !== -1) {
+        clearInterval(intervalId)   
+        setIntervalId(-1)
+    }
+  }, [stop])
+
+  function timestamp(time) {
+    return String(Math.floor((time - started) / 1000));
+  }
+
+  function log_for_watcher(text, time = Date.now(), colour = "gray") {
+    console.log("log for watcher")
+    const li = document.createElement("li");
+    li.style.color = colour;
+    li.innerText = (
+      "L" + timestamp(time) + ":W" + timestamp(Date.now()) + ":" + text
+    );
+    const container = document.getElementById("log");
+    return container.insertBefore(li, container.firstChild);
+  }
+
+  function make_guess() {
+    console.log("make guess")
+    return new Promise(function (resolve) {
+      let last_location = null;
+      let id;
+      BackgroundGeolocation.addWatcher(
+        {
+          requestPermissions: true,
+          stale: false
+        },
+        function callback(location) {
+          last_location = location;
+        }
+      ).then(function retain_callback_id(the_id) {
+        id = the_id;
+      });
+
+      BackgroundGeolocation.removeWatcher({ id })
+      resolve(last_location)
+    });
+  }
+
+  function startLocationTracking() {
+    //document.getElementById("debug").innerHTML = "start location tracking"
+    setStop(false)
+    const newIntervalId = setInterval(() => {
+      make_guess().then(function (location) {
+        if (location === null)
+          log_for_watcher("null", Date.now())
+        else log_for_watcher([location.latitude, location.longitude].map(String).join(":"), location.time)
+      });
+    }, INTERVAL)
+    setIntervalId(newIntervalId)
+  }
+
   return (
     <>
       <Head>
@@ -14,10 +81,11 @@ export default function Map() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className={`${inter.className} ${styles.main}`}>
-        <div id="report" className="h-75"></div>
-        <div className="row"> 
-          <Button className="col btn-success me-3">START</Button>
-          <Button className="col btn-danger">STOP</Button>
+        <div id="log" className="h-75 w-75 border border-secondary"></div>
+        <div id="debug"></div>
+        <div className="row">
+          <Button className="col btn-success me-3" onClick={() => startLocationTracking()}>START</Button>
+          <Button className="col btn-danger" onClick={() => setStop(true)}>STOP</Button>
         </div>
       </main>
     </>

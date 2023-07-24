@@ -25,21 +25,21 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need to track your location while your device is locked</string>
+	<string>We need to track your location while your device is locked.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need to track your location</string>
-	<key>UIBackgroundModes</key>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-    	<string>location</string>
-  	</array>
-	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIBackgroundModes</key>
+  	<array>
+    	<string>location</string>
+  	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
