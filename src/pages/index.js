@@ -2,11 +2,16 @@ import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import styles from '../styles/Map.module.css'
 import Button from 'react-bootstrap/Button';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import { registerPlugin } from "@capacitor/core";
+import dynamic from 'next/dynamic';
+//import OpenStreetMap from '../components/OpenStreetMap';
 
-const BackgroundGeolocation = registerPlugin("BackgroundGeolocation");
+const BackgroundGeolocation = registerPlugin("BackgroundGeolocation")
 const inter = Inter({ subsets: ['latin'] })
+const OpenStreetMap = dynamic(() => import('../components/OpenStreetMap'), {
+  ssr: false,
+})
 
 const INTERVAL = 10000 //milliseconds
 
@@ -18,8 +23,9 @@ export default function Map() {
 
   useEffect(() => {
     if (stop && intervalId !== -1) {
-        clearInterval(intervalId)   
-        setIntervalId(-1)
+      console.log("stopped")
+      clearInterval(intervalId)
+      setIntervalId(-1)
     }
   }, [stop])
 
@@ -28,7 +34,6 @@ export default function Map() {
   }
 
   function log_for_watcher(text, time = Date.now(), colour = "gray") {
-    console.log("log for watcher")
     const li = document.createElement("li");
     li.style.color = colour;
     li.innerText = (
@@ -61,9 +66,9 @@ export default function Map() {
   }
 
   function startLocationTracking() {
-    //document.getElementById("debug").innerHTML = "start location tracking"
     setStop(false)
     const newIntervalId = setInterval(() => {
+      console.log("set interval")
       make_guess().then(function (location) {
         if (location === null)
           log_for_watcher("null", Date.now())
@@ -81,8 +86,8 @@ export default function Map() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className={`${inter.className} ${styles.main}`}>
-        <div id="log" className="h-75 w-75 border border-secondary"></div>
-        <div id="debug"></div>
+        <OpenStreetMap />
+        <div id="log" className="h-20 w-75 border border-secondary"></div>
         <div className="row">
           <Button className="col btn-success me-3" onClick={() => startLocationTracking()}>START</Button>
           <Button className="col btn-danger" onClick={() => setStop(true)}>STOP</Button>
