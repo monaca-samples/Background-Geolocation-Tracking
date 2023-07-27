@@ -4,11 +4,14 @@ PODS:
   - CapacitorCommunityBackgroundGeolocation (0.0.1):
     - Capacitor
   - CapacitorCordova (5.2.2)
+  - CapacitorLocalNotifications (5.0.6):
+    - Capacitor
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorCommunityBackgroundGeolocation (from `../../node_modules/@capacitor-community/background-geolocation`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
 
 EXTERNAL SOURCES:
   Capacitor:
@@ -17,12 +20,15 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor-community/background-geolocation"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
+  CapacitorLocalNotifications:
+    :path: "../../node_modules/@capacitor/local-notifications"
 
 SPEC CHECKSUMS:
   Capacitor: 070b18988e0f566728ae9a5eb3a7a974595f1626
   CapacitorCommunityBackgroundGeolocation: 6f26f4290377dbd1d6dec21e62cb66f008f61ec7
   CapacitorCordova: 3773395d5331add072300ff6041ca2cf7b93cb0b
+  CapacitorLocalNotifications: c2d8b14794064fd4814b1d6c4ddbac8029afa295
 
-PODFILE CHECKSUM: 70a908447840e51d881bd270ee6fd960dfd92d0d
+PODFILE CHECKSUM: 6cd528bb15ab1ccd42133f6052ca5e6489845667
 
 COCOAPODS: 1.12.1

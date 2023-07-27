@@ -1,4 +1,5 @@
-.map_height{
+.map{
     height: 500px;
     width: 100%;
+    margin-top: 12px;
 }

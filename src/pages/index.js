@@ -2,18 +2,18 @@ import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import styles from '../styles/Map.module.css'
 import Button from 'react-bootstrap/Button';
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { registerPlugin } from "@capacitor/core";
 import dynamic from 'next/dynamic';
-//import OpenStreetMap from '../components/OpenStreetMap';
+import { LocalNotifications } from '@capacitor/local-notifications';
+const INTERVAL = 10000 //milliseconds
 
 const BackgroundGeolocation = registerPlugin("BackgroundGeolocation")
+
 const inter = Inter({ subsets: ['latin'] })
 const OpenStreetMap = dynamic(() => import('../components/OpenStreetMap'), {
   ssr: false,
 })
-
-const INTERVAL = 10000 //milliseconds
 
 export default function Map() {
 
@@ -23,7 +23,6 @@ export default function Map() {
 
   useEffect(() => {
     if (stop && intervalId !== -1) {
-      console.log("stopped")
       clearInterval(intervalId)
       setIntervalId(-1)
     }
@@ -43,38 +42,36 @@ export default function Map() {
     return container.insertBefore(li, container.firstChild);
   }
 
-  function make_guess() {
-    console.log("make guess")
-    return new Promise(function (resolve) {
-      let last_location = null;
-      let id;
-      BackgroundGeolocation.addWatcher(
-        {
-          requestPermissions: true,
-          stale: false
-        },
-        function callback(location) {
-          last_location = location;
-        }
-      ).then(function retain_callback_id(the_id) {
-        id = the_id;
-      });
+  function request_permissions() {
+    LocalNotifications.requestPermissions().then(
+      function (status) {
+        log_for_watcher("Notification permissions " + status.display);
+      }
+    );
+  }
 
-      BackgroundGeolocation.removeWatcher({ id })
-      resolve(last_location)
+  function make_guess() {
+    let id;
+    BackgroundGeolocation.addWatcher(
+      {
+        requestPermissions: true,
+        stale: true
+      },
+      function callback(location) {
+        if (location === null)
+          log_for_watcher("null", Date.now())
+        else log_for_watcher([location.latitude, location.longitude].map(String).join(":"), location.time)
+      }
+    ).then(function retain_callback_id(the_id) {
+      id = the_id;
     });
+
+    BackgroundGeolocation.removeWatcher({ id });
   }
 
   function startLocationTracking() {
     setStop(false)
-    const newIntervalId = setInterval(() => {
-      console.log("set interval")
-      make_guess().then(function (location) {
-        if (location === null)
-          log_for_watcher("null", Date.now())
-        else log_for_watcher([location.latitude, location.longitude].map(String).join(":"), location.time)
-      });
-    }, INTERVAL)
+    const newIntervalId = setInterval(() => { make_guess() }, INTERVAL)
     setIntervalId(newIntervalId)
   }
 
@@ -87,9 +84,10 @@ export default function Map() {
       </Head>
       <main className={`${inter.className} ${styles.main}`}>
         <OpenStreetMap />
-        <div id="log" className="h-20 w-75 border border-secondary"></div>
-        <div className="row">
-          <Button className="col btn-success me-3" onClick={() => startLocationTracking()}>START</Button>
+        <div id="log" className="h-20 w-75 border border-secondary">Logging</div>
+        <div className="row mb-2">
+          <Button className='col btn-warning me-2' onClick={() => request_permissions()}>PERMISSIONS</Button>
+          <Button className="col btn-success me-2" onClick={() => startLocationTracking()}>START</Button>
           <Button className="col btn-danger" onClick={() => setStop(true)}>STOP</Button>
         </div>
       </main>
