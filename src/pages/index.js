@@ -17,16 +17,37 @@ const OpenStreetMap = dynamic(() => import('../components/OpenStreetMap'), {
 
 export default function Map() {
 
-  const [stop, setStop] = useState(false)
-  const [intervalId, setIntervalId] = useState(-1)
+  const [stop, setStop] = useState(true)
+  const [id, setId] = useState(0)
+  const [position, setPosition] = useState([])
   const started = Date.now()
 
-  useEffect(() => {
-    if (stop && intervalId !== -1) {
-      clearInterval(intervalId)
-      setIntervalId(-1)
-    }
-  }, [stop])
+  // useEffect(() => {
+  //   if (stop && intervalId !== -1) {
+  //      clearInterval(intervalId)
+  //      setIntervalId(-1)
+  //   }
+  // }, [stop])
+
+  // useEffect(() => {
+  //   if (!stop) {
+  //     const interval = setInterval(() => {
+  //       make_guess()
+  //       //console.log("interval")
+  //       //log_for_watcher("interval")
+  //     }, 10000);
+  //     setIntervalId(interval)
+  //   }
+  //   else {
+  //     //console.log("clear interval")
+  //     log_for_watcher("clear interval")
+  //     if (intervalId != -1) {
+  //       clearInterval(intervalId);
+  //       setIntervalId(-1)
+  //     }
+
+  //   }
+  // }, [stop])
 
   function timestamp(time) {
     return String(Math.floor((time - started) / 1000));
@@ -51,29 +72,33 @@ export default function Map() {
   }
 
   function make_guess() {
-    let id;
+    //let id;
     BackgroundGeolocation.addWatcher(
       {
+        backgroundMessage: "Cancel to prevent battery drain.",
         requestPermissions: true,
         stale: true
       },
       function callback(location) {
         if (location === null)
           log_for_watcher("null", Date.now())
-        else log_for_watcher([location.latitude, location.longitude].map(String).join(":"), location.time)
+        else {
+          log_for_watcher([location.latitude, location.longitude].map(String).join(":"), location.time)
+          setPosition([location.latitude, location.longitude])
+        }
       }
     ).then(function retain_callback_id(the_id) {
-      id = the_id;
+      setId(the_id);
+      log_for_watcher(the_id)
     });
-
-    BackgroundGeolocation.removeWatcher({ id });
+    // BackgroundGeolocation.removeWatcher({ id });
   }
 
-  function startLocationTracking() {
-    setStop(false)
-    const newIntervalId = setInterval(() => { make_guess() }, INTERVAL)
-    setIntervalId(newIntervalId)
-  }
+  // function startLocationTracking() {
+  //   setStop(false)
+  //   const newIntervalId = setInterval(() => { make_guess() }, INTERVAL)
+  //   setIntervalId(newIntervalId)
+  // }
 
   return (
     <>
@@ -83,12 +108,15 @@ export default function Map() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className={`${inter.className} ${styles.main}`}>
-        <OpenStreetMap />
+        <OpenStreetMap position={position} />
         <div id="log" className="h-20 w-75 border border-secondary">Logging</div>
         <div className="row mb-2">
           <Button className='col btn-warning me-2' onClick={() => request_permissions()}>PERMISSIONS</Button>
-          <Button className="col btn-success me-2" onClick={() => startLocationTracking()}>START</Button>
-          <Button className="col btn-danger" onClick={() => setStop(true)}>STOP</Button>
+          <Button className="col btn-success me-2" onClick={() => { make_guess() }}>START</Button>
+          <Button className="col btn-danger" onClick={() => {
+            log_for_watcher("Stopping...")
+            BackgroundGeolocation.removeWatcher({ id })
+          }}>STOP</Button>
         </div>
       </main>
     </>
