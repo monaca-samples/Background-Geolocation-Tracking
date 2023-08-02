@@ -17,37 +17,9 @@ const OpenStreetMap = dynamic(() => import('../components/OpenStreetMap'), {
 
 export default function Map() {
 
-  const [stop, setStop] = useState(true)
   const [id, setId] = useState(0)
   const [position, setPosition] = useState([])
   const started = Date.now()
-
-  // useEffect(() => {
-  //   if (stop && intervalId !== -1) {
-  //      clearInterval(intervalId)
-  //      setIntervalId(-1)
-  //   }
-  // }, [stop])
-
-  // useEffect(() => {
-  //   if (!stop) {
-  //     const interval = setInterval(() => {
-  //       make_guess()
-  //       //console.log("interval")
-  //       //log_for_watcher("interval")
-  //     }, 10000);
-  //     setIntervalId(interval)
-  //   }
-  //   else {
-  //     //console.log("clear interval")
-  //     log_for_watcher("clear interval")
-  //     if (intervalId != -1) {
-  //       clearInterval(intervalId);
-  //       setIntervalId(-1)
-  //     }
-
-  //   }
-  // }, [stop])
 
   function timestamp(time) {
     return String(Math.floor((time - started) / 1000));
@@ -72,7 +44,6 @@ export default function Map() {
   }
 
   function make_guess() {
-    //let id;
     BackgroundGeolocation.addWatcher(
       {
         backgroundMessage: "Cancel to prevent battery drain.",
@@ -83,7 +54,7 @@ export default function Map() {
         if (location === null)
           log_for_watcher("null", Date.now())
         else {
-          log_for_watcher([location.latitude, location.longitude].map(String).join(":"), location.time)
+          log_for_watcher([location.latitude.toFixed(4), location.longitude.toFixed(4)].map(String).join(":"), location.time)
           setPosition([location.latitude, location.longitude])
         }
       }
@@ -91,14 +62,7 @@ export default function Map() {
       setId(the_id);
       log_for_watcher(the_id)
     });
-    // BackgroundGeolocation.removeWatcher({ id });
   }
-
-  // function startLocationTracking() {
-  //   setStop(false)
-  //   const newIntervalId = setInterval(() => { make_guess() }, INTERVAL)
-  //   setIntervalId(newIntervalId)
-  // }
 
   return (
     <>
@@ -109,8 +73,10 @@ export default function Map() {
       </Head>
       <main className={`${inter.className} ${styles.main}`}>
         <OpenStreetMap position={position} />
-        <div id="log" className="h-20 w-75 border border-secondary">Logging</div>
-        <div className="row mb-2">
+        <div className="border border-secondary mt-3" style={{ height: 80 + 'px', overflow: 'auto', width: 90 + '%' }}>
+          <div id="log" className="p-2">Log details...</div>
+        </div>
+        <div className="row my-3">
           <Button className='col btn-warning me-2' onClick={() => request_permissions()}>PERMISSIONS</Button>
           <Button className="col btn-success me-2" onClick={() => { make_guess() }}>START</Button>
           <Button className="col btn-danger" onClick={() => {

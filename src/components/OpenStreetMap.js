@@ -5,11 +5,11 @@ import 'leaflet/dist/leaflet.css'
 import styles from './openstreemap.module.css'
 
 const OpenStreetMap = (props) => {
-  const [center, setCenter] = useState({ lat: -4.043477, lng: 39.668205 })
-  const ZOOM_LEVEL = 1
+  const [center, setCenter] = useState({ lat:  36.028514, lng: 138.576491 })
+  const ZOOM_LEVEL = 3
   const mapRef = useRef()
   const position = props.position
-
+  
   return (
     <>
       <div className='container'>
