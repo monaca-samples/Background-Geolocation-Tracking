@@ -6,7 +6,6 @@ import React, { useState, useEffect } from 'react';
 import { registerPlugin } from "@capacitor/core";
 import dynamic from 'next/dynamic';
 import { LocalNotifications } from '@capacitor/local-notifications';
-const INTERVAL = 10000 //milliseconds
 
 const BackgroundGeolocation = registerPlugin("BackgroundGeolocation")
 
@@ -20,6 +19,7 @@ export default function Map() {
   const [id, setId] = useState(0)
   const [position, setPosition] = useState([])
   const started = Date.now()
+  const [showPolyline, setShowPolyline] = useState(false)
 
   function timestamp(time) {
     return String(Math.floor((time - started) / 1000));
@@ -72,16 +72,20 @@ export default function Map() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className={`${inter.className} ${styles.main}`}>
-        <OpenStreetMap position={position} />
+        <OpenStreetMap position={position} showPolyline={showPolyline} />
         <div className="border border-secondary mt-3" style={{ height: 80 + 'px', overflow: 'auto', width: 90 + '%' }}>
           <div id="log" className="p-2">Log details...</div>
         </div>
         <div className="row my-3">
           <Button className='col btn-warning me-2' onClick={() => request_permissions()}>PERMISSIONS</Button>
-          <Button className="col btn-success me-2" onClick={() => { make_guess() }}>START</Button>
+          <Button className="col btn-success me-2" onClick={() => { 
+            setShowPolyline(false)
+            make_guess() }}>START</Button>
           <Button className="col btn-danger" onClick={() => {
             log_for_watcher("Stopping...")
             BackgroundGeolocation.removeWatcher({ id })
+            setPosition(null)
+            setShowPolyline(true)
           }}>STOP</Button>
         </div>
       </main>
