@@ -13,7 +13,7 @@
 - React Bootstrap
 - React Leaflet
 - [Background Geolocation Plugin](https://github.com/capacitor-community/background-geolocation)
-- [Local Notifications Plugin] (https://capacitorjs.com/docs/apis/local-notifications)
+- [Local Notifications Plugin](https://capacitorjs.com/docs/apis/local-notifications)
 
 ## Features
 The app is able to:
