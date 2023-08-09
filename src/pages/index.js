@@ -18,19 +18,16 @@ export default function Map() {
 
   const [id, setId] = useState(0)
   const [position, setPosition] = useState([])
-  const started = Date.now()
   const [showPolyline, setShowPolyline] = useState(false)
 
-  function timestamp(time) {
-    return String(Math.floor((time - started) / 1000));
-  }
+  useEffect(() => {
+    request_permissions()
+  }, [])
 
-  function log_for_watcher(text, time = Date.now(), colour = "gray") {
+  function log_for_watcher(text, colour = "gray") {
     const li = document.createElement("li");
     li.style.color = colour;
-    li.innerText = (
-      "L" + timestamp(time) + ":W" + timestamp(Date.now()) + ":" + text
-    );
+    li.innerText = ( text);
     const container = document.getElementById("log");
     return container.insertBefore(li, container.firstChild);
   }
@@ -54,13 +51,13 @@ export default function Map() {
         if (location === null)
           log_for_watcher("null", Date.now())
         else {
-          log_for_watcher([location.latitude.toFixed(4), location.longitude.toFixed(4)].map(String).join(":"), location.time)
+          log_for_watcher([location.latitude.toFixed(4), location.longitude.toFixed(4)].map(String).join(":"))
           setPosition([location.latitude, location.longitude])
         }
       }
     ).then(function retain_callback_id(the_id) {
       setId(the_id);
-      log_for_watcher(the_id)
+      //log_for_watcher(the_id)
     });
   }
 
@@ -76,8 +73,8 @@ export default function Map() {
         <div className="border border-secondary mt-3" style={{ height: 80 + 'px', overflow: 'auto', width: 90 + '%' }}>
           <div id="log" className="p-2">Log details...</div>
         </div>
-        <div className="row my-3">
-          <Button className='col btn-warning me-2' onClick={() => request_permissions()}>PERMISSIONS</Button>
+        <div className="row my-2">
+          {/* <Button className='col btn-warning me-2' onClick={() => request_permissions()}>PERMISSIONS</Button> */}
           <Button className="col btn-success me-2" onClick={() => { 
             setShowPolyline(false)
             make_guess() }}>START</Button>
